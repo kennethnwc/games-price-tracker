@@ -1,0 +1,36 @@
+{
+  "name": "games-price-tracker",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next -p 3005",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc",
+    "sync:i18": "ts-node scripts/tsconfig.json scripts/syncTranslations.ts",
+    "i18": "yarn sync:i18"
+  },
+  "dependencies": {
+    "i18next": "^20.2.4",
+    "i18next-browser-languagedetector": "^6.1.1",
+    "i18next-http-backend": "^1.2.4",
+    "lodash": "^4.17.21",
+    "next": "latest",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-i18next": "^11.8.15"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.169",
+    "@types/node": "^12.12.21",
+    "@types/prettier": "^2.2.3",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "autoprefixer": "^10.2.5",
+    "postcss": "^8.2.15",
+    "prettier": "^2.3.0",
+    "tailwindcss": "^2.1.2",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+{
+  "_comment": "if you change this file, do: yarn i18",
+  "common": {
+    "loadMore": "Load More",
+    "loading": "Loading...",
+    "ok": "Ok",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "copyLink": "Copy Link",
+    "copied": "Copied!",
+    "copy": "Copy",
+    "error": "Error"
+  },
+  "header": {
+    "_comment": "Main Header UI Internationalization Strings",
+    "title": "Games Price Tracker"
+  },
+  "footer": {
+    "_comment": "Main Footer UI Internationalization Strings"
+  },
+  "pages": {
+    "_comment": "Respective Page UI Internationalization Strings",
+    "home": { "title": "Games Price Tracker" }
+  }
+}

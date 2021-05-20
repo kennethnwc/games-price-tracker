@@ -13,12 +13,17 @@ const getSales = async () => {
     return allProduct.map((product) => {
       const priceString = product.querySelector(".price")?.textContent;
       const [currency, amount] = priceString?.split(" ") || "HKD 0";
+      const productHref = product
+        .querySelector(".category-product-item-title-link")
+        ?.getAttribute("href");
+      const id = productHref?.substring(productHref.lastIndexOf("/") + 1);
       return {
         title: product
           .querySelector(".category-product-item-title-link")
           ?.textContent?.replace(/\s+/g, " ")
           .trim(),
         price: { currency, amount: parseFloat(amount) },
+        id: id,
       };
     });
   });

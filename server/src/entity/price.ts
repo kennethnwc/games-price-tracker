@@ -1,8 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { Game } from "./Game";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  BaseEntity,
+} from "typeorm";
+import { Game } from "./game";
 
 @Entity()
-export class Price {
+export class Price extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

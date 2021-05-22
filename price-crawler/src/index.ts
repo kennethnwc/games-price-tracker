@@ -1,7 +1,9 @@
-import puppeteer from "puppeteer";
-import schedule from "node-schedule";
-import fs from "fs";
 import amqp from "amqplib/callback_api";
+import schedule from "node-schedule";
+import puppeteer from "puppeteer";
+
+const scheduler =
+  process.env.NODE_ENV === "development" ? "1 * * * * *" : "* 1 * * *";
 
 const getSales = async () => {
   const browser = await puppeteer.launch();
@@ -26,20 +28,11 @@ const getSales = async () => {
           ?.textContent?.replace(/\s+/g, " ")
           .trim(),
         price: { currency, amount: parseFloat(amount) },
-        id: id,
+        store_id: id,
         discount: oldPriceString !== undefined,
       };
     });
   });
-
-  fs.writeFileSync(
-    "../temp_result/games.json",
-    JSON.stringify({
-      games: games,
-      lastUpdated: new Date().toISOString(),
-    }),
-    "utf8"
-  );
 
   await browser.close();
   return games;
@@ -66,9 +59,19 @@ amqp.connect("amqp://localhost", (error0, rabbitmq) => {
       console.log("get games");
       const games = await getSales();
       games.forEach((game) => {
-        channel.sendToQueue("game_update", Buffer.from(JSON.stringify(game)));
+        channel.sendToQueue(
+          "game_update",
+          Buffer.from(
+            JSON.stringify({ game, lastUpdate: new Date().toISOString() })
+          )
+        );
       });
-      channel.sendToQueue("games_update", Buffer.from(JSON.stringify(games)));
+      channel.sendToQueue(
+        "games_update",
+        Buffer.from(
+          JSON.stringify({ games, lastUpdate: new Date().toISOString() })
+        )
+      );
     });
   });
 });

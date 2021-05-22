@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   BaseEntity,
+  JoinColumn,
 } from "typeorm";
 import { Game } from "./game";
 
@@ -22,5 +23,6 @@ export class Price extends BaseEntity {
   start_date: Date;
 
   @ManyToOne(() => Game, (game) => game.prices)
+  @JoinColumn({ name: "game_id" })
   game: Game;
 }

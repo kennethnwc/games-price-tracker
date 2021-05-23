@@ -1,35 +1,34 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import * as Google from "expo-google-app-auth";
 import React from "react";
 import { Button, View } from "react-native";
 import { UserStackNavigatorParam } from "../navigation/StackNavigator";
+import { useTokenStore } from "../store/useTokenStore";
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<UserStackNavigatorParam, "Login">;
 };
 
-const storeData = async (value: any) => {
-  try {
-    const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem("@user_info", jsonValue);
-  } catch (e) {
-    // saving error
-  }
-};
-
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+  const { setTokens } = useTokenStore();
   const signInAsync = async () => {
     console.log("LoginScreen.js 6 | loggin in");
     try {
       const result = await Google.logInAsync({
-        iosClientId: `afsa`,
-        androidClientId: `dasd`,
+        iosClientId: `.com`,
+        androidClientId: `.com`,
       });
 
-      if (result.type === "success") {
+      if (
+        result.type === "success" &&
+        result.accessToken &&
+        result.refreshToken
+      ) {
         // Then you can use the Google REST API
-        await storeData(result);
+        await setTokens({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        });
         console.log("LoginScreen.js 17 | success, navigating to profile");
         navigation.navigate("Profile", undefined);
       }
@@ -50,5 +49,3 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     </View>
   );
 };
-
-// const styles = StyleSheet.create({});

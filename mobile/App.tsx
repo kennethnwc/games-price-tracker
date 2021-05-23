@@ -1,17 +1,8 @@
-import "react-native-gesture-handler";
-
+import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from "@react-navigation/native";
-import { Tabs } from "./navigation/Tabs";
 import { AppearanceProvider, useColorScheme } from "react-native-appearance";
-
-import { createStackNavigator } from "@react-navigation/stack";
-
-const Stack = createStackNavigator();
+import "react-native-gesture-handler";
+import { Tabs } from "./navigation/TabNavigator";
 
 const App = () => {
   const scheme = useColorScheme();

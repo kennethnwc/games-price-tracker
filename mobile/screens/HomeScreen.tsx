@@ -1,27 +1,30 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { Item } from "../components/Item";
 import { ThemeText } from "../ui/ThemeText";
-import { DetailScreen } from "./DetailScreen";
-
-const HomeStack = createStackNavigator();
 
 export const HomeScreen = () => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] =
     useState<{
-      last_updated: number;
-      products_on_sale: any[];
+      lastUpdated: string;
+      games: any[];
     }>();
 
   useEffect(() => {
-    fetch("http://192.168.1.21:4000/products_on_sales")
+    fetch("http://192.168.1.21:4000/games_on_sale")
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
   }, []);
+  const memoizedValue = useMemo(
+    () =>
+      ({ item }: { item: any }) =>
+        <Item item={item}></Item>,
+    [data?.games]
+  );
 
   return (
     <View style={{ flex: 1, padding: 24 }}>
@@ -29,24 +32,17 @@ export const HomeScreen = () => {
         <ActivityIndicator />
       ) : (
         <>
-          <ThemeText style={{ marginBottom: 10 }}>Games on sale</ThemeText>
+          <ThemeText style={{ marginBottom: 10 }}>
+            Last Updated {data?.lastUpdated.split("T")[0]}
+          </ThemeText>
           <FlatList
             style={{ marginBottom: 20 }}
-            data={data?.products_on_sale}
-            keyExtractor={({ id }) => id}
-            renderItem={({ item }) => <Item item={item}></Item>}
+            data={data?.games}
+            keyExtractor={({ store_id }) => store_id}
+            renderItem={memoizedValue}
           />
         </>
       )}
     </View>
   );
 };
-
-export function HomeStackScreen() {
-  return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="Detail" component={DetailScreen} />
-    </HomeStack.Navigator>
-  );
-}

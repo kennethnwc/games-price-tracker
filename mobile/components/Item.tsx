@@ -9,7 +9,7 @@ export const Item: React.FC<{ item: any }> = ({ item }) => {
     <TouchableOpacity
       style={{ marginBottom: 10 }}
       onPress={(e) => {
-        navigation.navigate("Detail", { id: item.id });
+        navigation.navigate("Detail", { id: item.store_id });
       }}
     >
       <View>

@@ -1701,6 +1701,13 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@react-native-async-storage/async-storage@^1.13.0":
+  version "1.15.4"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.4.tgz#cdba464ca3bb9f10ec538342cbf2520c06f453ab"
+  integrity sha512-pC0MS6UBuv/YiVAxtzi7CgUed8oCQNYMtGt0yb/I9fI/BWTiJK5cj4YtW2XtL95K5IuvPX/6uGWaouZ8KqXwdg==
+  dependencies:
+    deep-assign "^3.0.0"
+
 "@react-native-community/cli-debugger-ui@^4.13.1":
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-4.13.1.tgz#07de6d4dab80ec49231de1f1fbf658b4ad39b32c"
@@ -2107,6 +2114,11 @@ acorn@^7.4.0:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
+
+add@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
+  integrity sha1-JI8Kn25aUo7yKV2+7DBTITCuIjU=
 
 ajv@^6.10.0, ajv@^6.12.4:
   version "6.12.6"
@@ -3603,6 +3615,14 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+expo-app-auth@~10.1.2:
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/expo-app-auth/-/expo-app-auth-10.1.2.tgz#3fa0375e8c57e1911468da33a8aebe0bb62ac86e"
+  integrity sha512-scYsgp+PIcM1zq+tOK6gpeuPsC0FnbMHfvRx5KxiY5Z+0M2dG/ehkgw9aOHuZD+v+TVBRUEfd6HAapI3e63gIw==
+  dependencies:
+    "@expo/config-plugins" "^1.0.18"
+    invariant "^2.2.4"
+
 expo-application@~3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/expo-application/-/expo-application-3.1.2.tgz#7c93e8108a7f2a0be0afe37151f36c98e0111e7c"
@@ -3646,6 +3666,13 @@ expo-font@~9.1.0:
   integrity sha512-owzbbfrQet7mawTGKMXpVCIA9k56MGhtriO41AW4Zo65dd2Ikm4LoymuHKp2ZlHuIFjRnjECKWz7RXgy/C1yAg==
   dependencies:
     fontfaceobserver "^2.1.0"
+
+expo-google-app-auth@^8.1.7:
+  version "8.1.7"
+  resolved "https://registry.yarnpkg.com/expo-google-app-auth/-/expo-google-app-auth-8.1.7.tgz#41154838142726ac02e06f8a7a6505c21596efa0"
+  integrity sha512-BHYZPmry/Mqdti8VZa6b5KsyP/t34J8kKjHXSqznZzdR2UnzfLkPc53w2f0csNUwCD1C3jP8whtsLqIXV+ynkA==
+  dependencies:
+    expo-app-auth "~10.1.2"
 
 expo-keep-awake@~9.1.2:
   version "9.1.2"
@@ -7682,6 +7709,11 @@ yargs@^16.1.1:
     string-width "^4.2.0"
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
+
+yarn@^1.22.10:
+  version "1.22.10"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.10.tgz#c99daa06257c80f8fa2c3f1490724e394c26b18c"
+  integrity sha512-IanQGI9RRPAN87VGTF7zs2uxkSyQSrSPsju0COgbsKQOOXr5LtcVPeyXWgwVa0ywG3d8dg6kSYKGBuYK021qeA==
 
 yocto-queue@^0.1.0:
   version "0.1.0"

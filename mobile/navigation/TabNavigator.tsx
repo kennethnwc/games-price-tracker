@@ -1,15 +1,14 @@
-import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeScreen, HomeStackScreen } from "../screens/HomeScreen";
-import { StyleSheet, View, Text } from "react-native";
-
+import React from "react";
+import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { WishListScreen } from "../screens/WishListScreen";
-import { DetailScreen } from "../screens/DetailScreen";
+import { HomeStackNavigator, UserStackNavigator } from "./StackNavigator";
 
 const tabIcons: Record<string, string> = {
   Home: "home",
   WishList: "heart",
+  User: "user",
 };
 
 const Tab = createBottomTabNavigator();
@@ -33,8 +32,9 @@ export const Tabs = () => {
         },
       }}
     >
-      <Tab.Screen name="Home" component={HomeStackScreen}></Tab.Screen>
+      <Tab.Screen name="Home" component={HomeStackNavigator}></Tab.Screen>
       <Tab.Screen name="WishList" component={WishListScreen}></Tab.Screen>
+      <Tab.Screen name="User" component={UserStackNavigator}></Tab.Screen>
     </Tab.Navigator>
   );
 };

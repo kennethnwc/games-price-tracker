@@ -1,12 +1,11 @@
+import amqp from "amqplib/callback_api";
 import cors from "cors";
 import express from "express";
+import fs from "fs";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Game } from "./entity/game";
-import amqp from "amqplib/callback_api";
-import { Price } from "./entity/price";
-import { getGameWithPrices } from "./query/getGameWithLastPrice";
-import fs from "fs";
+import { gameUpdateConsumer } from "./consumers/gameUpdateConsumer";
+import { gameRouter } from "./routes/games";
 
 const PORT = process.env.PORT || 4000;
 
@@ -60,6 +59,11 @@ createConnection().then(async (db) => {
                 JSON.stringify(newGamesOnSaleResult),
                 "utf8"
               );
+              fs.writeFileSync(
+                `./games_${newLastUpdated.split("T")[0]}.json`,
+                JSON.stringify(result),
+                "utf-8"
+              );
               games_on_sale = newGamesOnSaleResult;
             } catch (err) {
               console.log(err);
@@ -69,54 +73,9 @@ createConnection().then(async (db) => {
         { noAck: true }
       );
 
-      channel.consume(
-        "game_update",
-        async (msg) => {
-          if (!msg) {
-            console.log("game_update no msg");
-          } else {
-            const result = JSON.parse(msg.content.toString());
-            const game = result.game;
-            const lastUpdate = result.lastUpdate;
+      channel.consume("game_update", gameUpdateConsumer, { noAck: true });
 
-            const gameRecord = await getGameWithPrices(game.store_id);
-            if (gameRecord) {
-              const prices = gameRecord.prices;
-              const lastPrice = prices[prices.length - 1];
-              const updatePriceAmount = game.price.amount;
-              if (updatePriceAmount != lastPrice.amount) {
-                const newPrice = await Price.create({
-                  code: lastPrice.code,
-                  amount: updatePriceAmount,
-                  start_date: lastUpdate,
-                  game: gameRecord,
-                }).save();
-                console.log(newPrice);
-              } else {
-                console.log("same price");
-              }
-            }
-            if (!gameRecord) {
-              const price = game.price;
-
-              const newPrice = await Price.create({
-                code: price.currency,
-                amount: price.amount,
-                start_date: lastUpdate,
-              }).save();
-
-              const newGame = await Game.create({
-                title: game.title,
-                store_id: game.store_id,
-                prices: [newPrice],
-              }).save();
-
-              console.log(newGame, "inserted");
-            }
-          }
-        },
-        { noAck: true }
-      );
+      app.use("/games", gameRouter);
 
       app.get("/games_on_sale", async (_req, res) => {
         if (!games_on_sale) {
@@ -126,34 +85,16 @@ createConnection().then(async (db) => {
         }
       });
 
-      app.get("/test", async (_req, res) => {
-        const a = await Game.findOne({ store_id: "fd" });
-        console.log(a);
-        res.json(a);
-      });
-
-      app.get("/games", async (_req, res) => {
-        try {
-          const games = await db
-            .createQueryBuilder(Game, "games")
-            .leftJoinAndSelect("games.prices", "prices")
-            .orderBy("prices.start_date", "DESC")
-            .getMany();
-          res.status(200).json(games);
-        } catch (err) {
-          res.status(500).json({ message: err.message });
-        }
-      });
-
-      app.get("/game/:store_id", async (req, res) => {
-        try {
-          const { store_id } = req.params;
-          const game = await getGameWithPrices(store_id);
-          res.status(200).json(game);
-        } catch (err) {
-          res.status(500).json({ message: err.message });
-        }
-      });
+      // app.post("/user", async (req, res) => {
+      //   const body: { [key: string]: string } = req.body;
+      //   const { username, email, password } = body;
+      //   if (username && email && password) {
+      //     const user = await User.findOne({ email });
+      //     if (user) {
+      //       return res.status(400).json({ message: "user already exists" });
+      //     }
+      //   }
+      // });
 
       app.listen(PORT, () => {
         console.log(`listend on PORT ${PORT}`);

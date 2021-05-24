@@ -16,16 +16,16 @@ export const gameUpdateConsumer = async (msg: amqp.Message | null) => {
       const prices = gameRecord.prices;
       const lastPrice = prices[prices.length - 1];
       const updatePriceAmount = game.price.amount;
-      if (updatePriceAmount != lastPrice.amount) {
+      if (!lastPrice || updatePriceAmount != lastPrice.amount) {
         const newPrice = await Price.create({
-          code: lastPrice.code,
+          code: game.price.currency,
           amount: updatePriceAmount,
           start_date: lastUpdate,
           game: gameRecord,
         }).save();
         console.log(newPrice);
       } else {
-        console.log("same price");
+        // console.log("same price");
       }
     }
     if (!gameRecord) {

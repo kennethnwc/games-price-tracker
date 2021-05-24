@@ -15,8 +15,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     console.log("LoginScreen.js 6 | loggin in");
     try {
       const result = await Google.logInAsync({
-        iosClientId: `.com`,
-        androidClientId: `.com`,
+        iosClientId: ``,
+        androidClientId: ``,
       });
 
       if (
@@ -30,6 +30,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           refreshToken: result.refreshToken,
         });
         console.log("LoginScreen.js 17 | success, navigating to profile");
+        const data = await fetch("http://localhost");
         navigation.navigate("Profile", undefined);
       }
     } catch (error) {

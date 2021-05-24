@@ -21,6 +21,9 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
+  @Column({ name: "google_id" })
+  googleID: string;
+
   @CreateDateColumn()
   created_at: Date;
 

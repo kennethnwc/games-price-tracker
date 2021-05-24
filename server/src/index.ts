@@ -6,6 +6,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { gameUpdateConsumer } from "./consumers/gameUpdateConsumer";
 import { gameRouter } from "./routes/games";
+import { userRouter } from "./routes/user";
 
 const PORT = process.env.PORT || 4000;
 
@@ -76,6 +77,7 @@ createConnection().then(async (db) => {
       channel.consume("game_update", gameUpdateConsumer, { noAck: true });
 
       app.use("/games", gameRouter);
+      app.use("/user", userRouter);
 
       app.get("/games_on_sale", async (_req, res) => {
         if (!games_on_sale) {

@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "@types/amqplib": "^0.5.17",
+    "@types/axios": "^0.14.0",
     "amqplib": "^0.8.0",
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "pg": "^8.6.0",

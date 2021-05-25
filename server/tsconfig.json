@@ -34,8 +34,4 @@
         "./src/**/*.tsx",
         "./src/**/*.ts"
     ],
-    "typeRoots": [
-        "./src/typings",
-        "./node_modules/@types"
-    ],
 }

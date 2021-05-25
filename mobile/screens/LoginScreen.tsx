@@ -13,9 +13,8 @@ type LoginScreenProps = {
 };
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { setTokens } = useTokenStore();
+  const { setTokens, refreshToken } = useTokenStore();
   const signInAsync = async () => {
-    console.log("LoginScreen.js 6 | loggin in");
     try {
       const result = await Google.logInAsync({
         iosClientId: IOS_CLIENT_ID,
@@ -34,28 +33,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         })
           .then((r) => r.json())
           .catch(() => null);
-        console.log(data);
         await setTokens({
           accessToken: data.accessToken,
-          refreshToken: "",
+          refreshToken: data.refreshToken,
         });
         navigation.navigate("Profile", undefined);
       }
-      console.log("LoginScreen.js 17 | success, navigating to profile");
-    } catch (error) {
-      console.log("LoginScreen.js 19 | error with login", error);
-    }
+    } catch (error) {}
   };
-
   return (
     <View>
       <Button title="Login with Google" onPress={signInAsync} />
-      <Button
-        title="Profile"
-        onPress={() => {
-          navigation.navigate("Profile", undefined);
-        }}
-      ></Button>
+      {refreshToken ? (
+        <Button
+          title="Profile"
+          onPress={() => {
+            navigation.navigate("Profile", undefined);
+          }}
+        />
+      ) : null}
     </View>
   );
 };

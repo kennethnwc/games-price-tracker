@@ -1,65 +1,58 @@
-import axios from "axios";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
+import { UserInRequest } from "../typings";
 
 import { User } from "../entity/user";
+import { authMiddleware } from "../middleware/auth";
+import { googleAuthMiddle } from "../middleware/googleAuth";
+import { getAccessToken, getRefreshToken } from "../utils";
 
 export const userRouter = Router();
 
-userRouter.get("/login", async (req, res) => {
-  const bearerHeader = req.headers.authorization;
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
-    console.log("google id token", bearerToken);
-    const data = await axios
-      .get(`https://oauth2.googleapis.com/tokeninfo?id_token=${bearerToken}`)
-      .then((res) => res.data)
-      .catch(() => {});
-    // successful google check
-    if (data) {
-      console.log(data);
-      const userRecord = await User.findOne({ googleID: data.sub });
-      if (!userRecord) {
-        // no user record in database
-        const newUser = await User.create({
-          email: data.email,
-          googleID: data.sub,
-        }).save();
-        const accessToken = jwt.sign(
-          { email: newUser.email, googleID: newUser.googleID },
-          process.env.JWT_SECRET!
-        );
-        return res.json({ accessToken });
-      } else {
-        // userRecord in database
-        const accessToken = jwt.sign(
-          { email: userRecord.email, googleID: userRecord.googleID },
-          process.env.JWT_SECRET!
-        );
-        return res.json({ accessToken });
-      }
+userRouter.get("/login", googleAuthMiddle, async (req, res) => {
+  const data = req.googleVerifyResponse;
+  if (data) {
+    const userRecord = await User.findOne({ googleID: data.sub });
+    if (!userRecord) {
+      // no user record in database
+      const newUser = await User.create({
+        email: data.email,
+        googleID: data.sub,
+      }).save();
+      const user = {
+        email: newUser.email,
+        googleID: newUser.googleID,
+      };
+      const accessToken = getAccessToken(user);
+      const refreshToken = getRefreshToken(user);
+      return res.json({ accessToken, refreshToken });
+    } else {
+      // userRecord in database
+      const user = { email: userRecord.email, googleID: userRecord.googleID };
+      const refreshToken = getRefreshToken(user);
+      const accessToken = getAccessToken(user);
+      return res.json({ accessToken, refreshToken });
     }
   }
-  // Fail to login
-  return res.json({ error: "Please login again" });
+  return res.sendStatus(403).json({});
 });
 
-userRouter.get("/profile", (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(" ")[1];
-  console.log(token);
-  if (typeof token === undefined) {
-    return res.sendStatus(401);
-  } else {
-    jwt.verify(token!, process.env.JWT_SECRET!, (err, user) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
-      req.user = user as { googleID: string; email: string };
-      console.log(user);
-      return res.json(user);
+userRouter.get("/profile", authMiddleware, async (req, res) => {
+  res.json(req.user);
+});
+
+userRouter.post("/token", async (req, res) => {
+  const refreshToken: string = req.body.token;
+  if (refreshToken == null) return res.sendStatus(401);
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!, (err, user) => {
+    if (err) return res.sendStatus(403);
+    const u = user as UserInRequest;
+    const accessToken = getAccessToken({
+      email: u.email,
+      googleID: u.googleID,
     });
-  }
-  // return res.sendStatus(403);
+    res.json({ accessToken: accessToken });
+    return;
+  });
+  return;
 });

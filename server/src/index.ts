@@ -1,9 +1,12 @@
+import "dotenv";
+import "reflect-metadata";
+
 import amqp from "amqplib/callback_api";
 import cors from "cors";
 import express from "express";
 import fs from "fs";
-import "reflect-metadata";
 import { createConnection } from "typeorm";
+
 import { gameUpdateConsumer } from "./consumers/gameUpdateConsumer";
 import { gameRouter } from "./routes/games";
 import { userRouter } from "./routes/user";
@@ -87,16 +90,15 @@ createConnection().then(async (db) => {
         }
       });
 
-      // app.post("/user", async (req, res) => {
-      //   const body: { [key: string]: string } = req.body;
-      //   const { username, email, password } = body;
-      //   if (username && email && password) {
-      //     const user = await User.findOne({ email });
-      //     if (user) {
-      //       return res.status(400).json({ message: "user already exists" });
-      //     }
-      //   }
-      // });
+      app.get("/", async (_, _res, next) => {
+        console.log("test");
+        _res.send("FDFD");
+      });
+      app.get("/", async (_r, res) => {
+        console.log("test2");
+        res.json("RRR");
+        console.log("FFDF");
+      });
 
       app.listen(PORT, () => {
         console.log(`listend on PORT ${PORT}`);

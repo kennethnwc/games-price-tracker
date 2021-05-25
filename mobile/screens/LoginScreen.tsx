@@ -1,7 +1,10 @@
-import { StackNavigationProp } from "@react-navigation/stack";
 import * as Google from "expo-google-app-auth";
 import React from "react";
 import { Button, View } from "react-native";
+
+import { StackNavigationProp } from "@react-navigation/stack";
+
+import { AN_CLIENT_ID, API_URL, IOS_CLIENT_ID } from "../constants";
 import { UserStackNavigatorParam } from "../navigation/StackNavigator";
 import { useTokenStore } from "../store/useTokenStore";
 
@@ -15,8 +18,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     console.log("LoginScreen.js 6 | loggin in");
     try {
       const result = await Google.logInAsync({
-        iosClientId: ``,
-        androidClientId: ``,
+        iosClientId: IOS_CLIENT_ID,
+        androidClientId: AN_CLIENT_ID,
       });
 
       if (
@@ -24,15 +27,21 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         result.accessToken &&
         result.refreshToken
       ) {
-        // Then you can use the Google REST API
+        const headers = new Headers();
+        headers.append("Authorization", `Bearer ${result.idToken}`);
+        const data = await fetch(API_URL + "/user/login", {
+          headers: headers,
+        })
+          .then((r) => r.json())
+          .catch(() => null);
+        console.log(data);
         await setTokens({
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
+          accessToken: data.accessToken,
+          refreshToken: "",
         });
-        console.log("LoginScreen.js 17 | success, navigating to profile");
-        const data = await fetch("http://localhost");
         navigation.navigate("Profile", undefined);
       }
+      console.log("LoginScreen.js 17 | success, navigating to profile");
     } catch (error) {
       console.log("LoginScreen.js 19 | error with login", error);
     }

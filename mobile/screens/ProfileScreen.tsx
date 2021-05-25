@@ -1,8 +1,10 @@
-import { useNavigation, useRoute } from "@react-navigation/core";
-import { RouteProp } from "@react-navigation/native";
 import { GoogleUser, LogInResult } from "expo-google-app-auth";
 import React, { useEffect, useState } from "react";
 import { Button, Text, View } from "react-native";
+
+import { useNavigation } from "@react-navigation/core";
+
+import { API_URL } from "../constants";
 import { useTokenStore } from "../store/useTokenStore";
 
 export type ProfileScreenParam = {
@@ -10,18 +12,26 @@ export type ProfileScreenParam = {
 };
 
 export const ProfileScreen = () => {
-  const { accessToken, refreshToken, setTokens } = useTokenStore();
+  const { accessToken, setTokens } = useTokenStore();
 
   const navigation = useNavigation();
-  const [userInfo, setUserInfo] = useState<LogInResult | null>(null);
-  console.log({ accessToken, refreshToken });
+  const [userInfo, setUserInfo] = useState<any>(null);
+  useEffect(() => {
+    (async () => {
+      const user = await fetch(API_URL + "/user/profile", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }).then((r) => r.json());
+      console.log("Called", user);
+      setUserInfo(user);
+    })();
+  }, [accessToken]);
   return (
     <View>
       <Text>Profile Screen</Text>
       <Text>
-        {!userInfo || userInfo.type === "cancel"
-          ? "Please Login"
-          : `Welcome ${userInfo.user.name}`}
+        {userInfo && userInfo.email && userInfo.googleID
+          ? "You are Login ed"
+          : "Loading"}
       </Text>
       <Button
         title="Logout"

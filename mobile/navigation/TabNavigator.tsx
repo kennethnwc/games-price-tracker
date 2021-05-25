@@ -6,7 +6,7 @@ import { WishListScreen } from "../screens/WishListScreen";
 import { HomeStackNavigator, UserStackNavigator } from "./StackNavigator";
 
 const tabIcons: Record<string, string> = {
-  Home: "home",
+  Home: "tag",
   WishList: "heart",
   User: "user",
 };
@@ -19,7 +19,7 @@ export const Tabs = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           // You can return any component that you like here!
-          const iconName = tabIcons[route.name] || "home";
+          const iconName = tabIcons[route.name] || "tag";
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}

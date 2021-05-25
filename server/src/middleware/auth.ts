@@ -15,7 +15,8 @@ export const authMiddleware = async (
   }
   jwt.verify(token, process.env.JWT_SECRET!, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: "access token expired" });
+      // access token expired
+      return res.sendStatus(401);
     }
     req.user = user as UserInRequest;
     next();

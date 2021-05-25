@@ -7,6 +7,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { AN_CLIENT_ID, API_URL, IOS_CLIENT_ID } from "../constants";
 import { UserStackNavigatorParam } from "../navigation/StackNavigator";
 import { useTokenStore } from "../store/useTokenStore";
+import { Layout } from "./Layout";
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<UserStackNavigatorParam, "Login">;
@@ -41,9 +42,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       }
     } catch (error) {}
   };
+  console.log(refreshToken);
   return (
-    <View>
-      <Button title="Login with Google" onPress={signInAsync} />
+    <Layout>
+      <Button
+        title="Profile"
+        onPress={() => {
+          navigation.navigate("Profile", undefined);
+        }}
+      />
       {refreshToken ? (
         <Button
           title="Profile"
@@ -51,7 +58,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             navigation.navigate("Profile", undefined);
           }}
         />
-      ) : null}
-    </View>
+      ) : (
+        <Button title="Login with Google" onPress={signInAsync} />
+      )}
+    </Layout>
   );
 };

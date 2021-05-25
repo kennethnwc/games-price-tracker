@@ -1,13 +1,19 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
+import { useTokenStore } from "../store/useTokenStore";
 import { ThemeText } from "../ui/ThemeText";
 
 export const WishListScreen = () => {
+  const { accessToken, refreshToken } = useTokenStore();
   return (
     <View style={styles.container}>
       <ThemeText>Wish List</ThemeText>
-      <StatusBar style="auto" />
+      <Button
+        title="Test"
+        onPress={() => {
+          console.log({ accessToken, refreshToken });
+        }}
+      />
     </View>
   );
 };

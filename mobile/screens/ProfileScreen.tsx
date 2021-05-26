@@ -1,5 +1,3 @@
-import { GoogleUser, LogInResult } from "expo-google-app-auth";
-import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,57 +13,66 @@ import { API_URL } from "../constants";
 import { useTokenStore } from "../store/useTokenStore";
 import { Layout } from "./Layout";
 
-import axios from "axios";
-
 export type ProfileScreenParam = {
-  Profile: { user: GoogleUser; result: LogInResult };
+  Profile: { accessToken: string };
 };
 
 export const ProfileScreen = () => {
   const { accessToken, setTokens, refreshToken } = useTokenStore();
-
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState<any>(null);
   const [isLoading, setLoading] = useState(true);
-  console.log({ accessToken, refreshToken });
   useEffect(() => {
     setLoading(true);
-    const fetchUserInfo = async () => {
-      const response = await axios.get(API_URL + "/user/profile", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      console.log("fetch result", response.data);
-      setUserInfo(response.data);
+    const getData = async (
+      url: string,
+      times: number,
+      accessTokenToFetch: string
+    ) => {
+      // try to fetch data
+      let data = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessTokenToFetch}` },
+      })
+        .then((r) => r.json())
+        .catch(() => "expired");
+      setUserInfo(data);
+      // // if token need to be refreshed.
+      if (data === "expired") {
+        //   // Use variable times to prevent stack overflow.
+        if (times > 0) {
+          // refresh the token
+          const newToken = await fetch(API_URL + "/user/token", {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({ token: refreshToken }),
+          })
+            .then((r) => r.json())
+            .then((r) => r.accessToken);
+          // try again
+          let data = await fetch(url, {
+            headers: { Authorization: `Bearer ${newToken}` },
+          })
+            .then((r) => r.json())
+            .catch(() => "expired");
+          setUserInfo(data);
+          return newToken;
+        } else {
+          throw new Error("The appropriate error message");
+        }
+      }
+
+      return accessToken;
     };
-    fetchUserInfo();
-    // (async () => {
-    //   setLoading(true);
-    //   const decodedAccessToken = jwtDecode<{ exp: number }>(accessToken!);
-    //   const decodedRefreshToken = jwtDecode<{ exp: number }>(refreshToken!);
-    //   console.log("Profile useEffect 1");
-    //   if (decodedAccessToken.exp < Date.now() / 1000) {
-    //     const newAccessToken = await fetch(API_URL + "/user/token", {
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "application/json",
-    //       },
-    //       method: "POST",
-    //       body: JSON.stringify({ token: refreshToken }),
-    //     }).then((r) => r.json());
-    //     setTokens({
-    //       accessToken: newAccessToken.accessToken,
-    //       refreshToken: refreshToken!,
-    //     });
-    //   }
-    //   const user = await fetch(API_URL + "/user/profile", {
-    //     headers: { Authorization: `Bearer ${accessToken}` },
-    //   }).then((r) => r.json());
-    //   setUserInfo(user);
-    //   setLoading(false);
-    // })();
+
+    getData(API_URL + "/user/profile", 3, accessToken || "").then(async (r) => {
+      await setTokens({ accessToken: r, refreshToken: refreshToken! });
+    });
 
     setLoading(false);
-  }, []);
+  }, [accessToken]);
 
   if (isLoading) return <ActivityIndicator />;
   return (

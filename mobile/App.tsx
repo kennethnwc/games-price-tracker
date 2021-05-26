@@ -7,7 +7,6 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import { Tabs } from "./navigation/TabNavigator";
 import { useTokenStore } from "./store/useTokenStore";
-import { initAxios } from "./utils/fetching";
 
 const App = () => {
   const scheme = useColorScheme();
@@ -19,11 +18,9 @@ const App = () => {
   if (!isTokenStoreReady) {
     tokenStore.loadTokens();
   }
-  useEffect(() => {
-    initAxios(tokenStore);
-  }, [isTokenStoreReady]);
+  useEffect(() => {}, [isTokenStoreReady]);
 
-  console.log("Token store", tokenStore);
+  // console.log("App.tsx tokenStore", tokenStore);
 
   return (
     <AppearanceProvider>

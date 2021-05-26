@@ -1,6 +1,6 @@
 import * as Google from "expo-google-app-auth";
 import React from "react";
-import { Button, View } from "react-native";
+import { Button } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -42,7 +42,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       }
     } catch (error) {}
   };
-  console.log(refreshToken);
   return (
     <Layout>
       <Button

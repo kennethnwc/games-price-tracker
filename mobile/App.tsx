@@ -15,12 +15,9 @@ const App = () => {
     (s) => s.accessToken !== undefined && s.refreshToken !== undefined
   );
 
-  if (!isTokenStoreReady) {
+  useEffect(() => {
     tokenStore.loadTokens();
-  }
-  useEffect(() => {}, [isTokenStoreReady]);
-
-  // console.log("App.tsx tokenStore", tokenStore);
+  }, [isTokenStoreReady]);
 
   return (
     <AppearanceProvider>

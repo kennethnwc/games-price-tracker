@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/core";
 
 import { API_URL } from "../constants";
 import { useTokenStore } from "../store/useTokenStore";
+import { getDataWithAuth } from "../utils/getDataWithAuth";
 import { Layout } from "./Layout";
 
 export type ProfileScreenParam = {
@@ -24,53 +25,26 @@ export const ProfileScreen = () => {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
-    const getData = async (
-      url: string,
-      times: number,
-      accessTokenToFetch: string
-    ) => {
-      // try to fetch data
-      let data = await fetch(url, {
-        headers: { Authorization: `Bearer ${accessTokenToFetch}` },
+
+    getDataWithAuth(
+      API_URL + "/user/profile",
+      accessToken || "",
+      refreshToken || ""
+    )
+      .then(async (r) => {
+        const { data, accessToken } = r!;
+        setUserInfo({ ...data });
+        await setTokens({
+          accessToken: accessToken,
+          refreshToken: refreshToken!,
+        });
       })
-        .then((r) => r.json())
-        .catch(() => "expired");
-      setUserInfo(data);
-      // // if token need to be refreshed.
-      if (data === "expired") {
-        //   // Use variable times to prevent stack overflow.
-        if (times > 0) {
-          // refresh the token
-          const newToken = await fetch(API_URL + "/user/token", {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({ token: refreshToken }),
-          })
-            .then((r) => r.json())
-            .then((r) => r.accessToken);
-          // try again
-          let data = await fetch(url, {
-            headers: { Authorization: `Bearer ${newToken}` },
-          })
-            .then((r) => r.json())
-            .catch(() => "expired");
-          setUserInfo(data);
-          return newToken;
-        } else {
-          throw new Error("The appropriate error message");
+      .catch(async (err) => {
+        if (err.message === "refresh token expired") {
+          await setTokens({ accessToken: "", refreshToken: "" });
         }
-      }
-
-      return accessToken;
-    };
-
-    getData(API_URL + "/user/profile", 3, accessToken || "").then(async (r) => {
-      await setTokens({ accessToken: r, refreshToken: refreshToken! });
-    });
-
+        navigation.navigate("Login");
+      });
     setLoading(false);
   }, [accessToken]);
 

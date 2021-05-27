@@ -42,7 +42,7 @@ userRouter.get("/profile", authMiddleware, async (req, res) => {
 });
 
 userRouter.post("/token", async (req, res) => {
-  const refreshToken: string = req.body.token;
+  const refreshToken: string = req.body.refreshToken;
   if (refreshToken == null) return res.sendStatus(401);
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!, (err, user) => {
     if (err) return res.sendStatus(403);

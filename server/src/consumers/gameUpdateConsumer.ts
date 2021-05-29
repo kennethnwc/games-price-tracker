@@ -1,7 +1,8 @@
 import amqp from "amqplib/callback_api";
+
 import { Game } from "../entity/game";
 import { Price } from "../entity/price";
-import { getGameWithPrices } from "../query/getGameWithLastPrice";
+import { getGameWithLastPrice } from "../query/getGameWithLastPrice";
 
 export const gameUpdateConsumer = async (msg: amqp.Message | null) => {
   if (!msg) {
@@ -11,11 +12,15 @@ export const gameUpdateConsumer = async (msg: amqp.Message | null) => {
     const game = result.game;
     const lastUpdate = result.lastUpdate;
 
-    const gameRecord = await getGameWithPrices(game.store_id);
+    const gameRecord = await getGameWithLastPrice({ store_id: game.store_id });
     if (gameRecord) {
       const prices = gameRecord.prices;
       const lastPrice = prices[prices.length - 1];
       const updatePriceAmount = game.price.amount;
+      if (game.image_url && !gameRecord.image_url) {
+        gameRecord.image_url = game.image_url;
+        await gameRecord.save();
+      }
       if (!lastPrice || updatePriceAmount != lastPrice.amount) {
         const newPrice = await Price.create({
           code: game.price.currency,
@@ -23,6 +28,7 @@ export const gameUpdateConsumer = async (msg: amqp.Message | null) => {
           start_date: lastUpdate,
           game: gameRecord,
         }).save();
+
         console.log(newPrice);
       } else {
         // console.log("same price");
@@ -41,6 +47,7 @@ export const gameUpdateConsumer = async (msg: amqp.Message | null) => {
         title: game.title,
         store_id: game.store_id,
         prices: [newPrice],
+        image_url: game.image_url,
       }).save();
 
       console.log(newGame, "inserted");

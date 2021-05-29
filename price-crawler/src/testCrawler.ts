@@ -1,9 +1,4 @@
-import amqp from "amqplib/callback_api";
-import schedule from "node-schedule";
 import puppeteer from "puppeteer";
-
-const scheduler =
-  process.env.NODE_ENV === "development" ? "1 * * * * *" : "* 1 * * *";
 
 const getSales = async () => {
   const browser = await puppeteer.launch();
@@ -31,10 +26,9 @@ const getSales = async () => {
         .querySelector(".category-product-item-title-link")
         ?.getAttribute("href");
       const id = productHref?.substring(productHref.lastIndexOf("/") + 1);
-      const img =
-        product.querySelector<HTMLImageElement>(
-          ".category-product-item-img img"
-        )?.src || "";
+      const img = product.querySelector<HTMLImageElement>(
+        ".category-product-item-img img"
+      )?.src;
       return {
         title: product
           .querySelector(".category-product-item-title-link")
@@ -52,40 +46,6 @@ const getSales = async () => {
   return games;
 };
 
-amqp.connect("amqp://localhost", (error0, rabbitmq) => {
-  if (error0) {
-    throw error0;
-  }
-
-  rabbitmq.createChannel((error1, channel) => {
-    if (error1) {
-      throw error1;
-    }
-
-    channel.assertQueue("games_update", {
-      durable: false,
-    });
-    channel.assertQueue("game_update", {
-      durable: false,
-    });
-
-    schedule.scheduleJob("1 * * * * *", async () => {
-      console.log("get games");
-      const games = await getSales();
-      games.forEach((game) => {
-        channel.sendToQueue(
-          "game_update",
-          Buffer.from(
-            JSON.stringify({ game, lastUpdate: new Date().toISOString() })
-          )
-        );
-      });
-      channel.sendToQueue(
-        "games_update",
-        Buffer.from(
-          JSON.stringify({ games, lastUpdate: new Date().toISOString() })
-        )
-      );
-    });
-  });
+getSales().then((r) => {
+  console.log(r);
 });

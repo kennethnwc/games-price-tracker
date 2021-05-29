@@ -1,10 +1,10 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { UserInRequest } from "../typings";
 
 import { User } from "../entity/user";
 import { authMiddleware } from "../middleware/auth";
 import { googleAuthMiddle } from "../middleware/googleAuth";
+import { UserInRequest } from "../typings";
 import { getAccessToken, getRefreshToken } from "../utils";
 
 export const userRouter = Router();
@@ -20,6 +20,7 @@ userRouter.get("/login", googleAuthMiddle, async (req, res) => {
         googleID: data.sub,
       }).save();
       const user = {
+        userID: newUser.id,
         email: newUser.email,
         googleID: newUser.googleID,
       };
@@ -28,7 +29,11 @@ userRouter.get("/login", googleAuthMiddle, async (req, res) => {
       return res.json({ accessToken, refreshToken });
     } else {
       // userRecord in database
-      const user = { email: userRecord.email, googleID: userRecord.googleID };
+      const user = {
+        email: userRecord.email,
+        googleID: userRecord.googleID,
+        userID: userRecord.id,
+      };
       const refreshToken = getRefreshToken(user);
       const accessToken = getAccessToken(user);
       return res.json({ accessToken, refreshToken });
@@ -50,6 +55,7 @@ userRouter.post("/token", async (req, res) => {
     const accessToken = getAccessToken({
       email: u.email,
       googleID: u.googleID,
+      userID: u.userID,
     });
     res.json({ accessToken: accessToken });
     return;

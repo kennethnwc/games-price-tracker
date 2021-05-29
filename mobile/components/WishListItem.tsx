@@ -3,16 +3,12 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 
+import { WishList } from "../types/response";
 import { ThemeText } from "../ui/ThemeText";
 
-export const Item: React.FC<{
-  item: {
-    store_id: string;
-    image_url: string;
-    title: string;
-    price: { currency: string; amount: number };
-  };
-}> = ({ item }) => {
+type Props = { item: WishList };
+
+export const WishListItem: React.FC<Props> = ({ item }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -34,7 +30,7 @@ export const Item: React.FC<{
         ></Image>
         <ThemeText>{item.title}</ThemeText>
         <ThemeText>
-          {item.price.currency} {item.price.amount}
+          {item.prices[0].code} {item.prices[0].amount}
         </ThemeText>
       </View>
     </TouchableOpacity>

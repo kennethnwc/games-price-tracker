@@ -8,8 +8,11 @@ import fs from "fs";
 import { createConnection } from "typeorm";
 
 import { gameUpdateConsumer } from "./consumers/gameUpdateConsumer";
+import { Game } from "./entity/game";
+import { Price } from "./entity/price";
 import { gameRouter } from "./routes/games";
 import { userRouter } from "./routes/user";
+import { wishListRouter } from "./routes/wishList";
 
 const PORT = process.env.PORT || 4000;
 
@@ -59,12 +62,12 @@ createConnection().then(async (db) => {
                 lastUpdated: newLastUpdated,
               };
               fs.writeFileSync(
-                "./games_on_sales.json",
+                "../games_on_sales.json",
                 JSON.stringify(newGamesOnSaleResult),
                 "utf8"
               );
               fs.writeFileSync(
-                `./games_${newLastUpdated.split("T")[0]}.json`,
+                `../games_${newLastUpdated.split("T")[0]}.json`,
                 JSON.stringify(result),
                 "utf-8"
               );
@@ -81,6 +84,7 @@ createConnection().then(async (db) => {
 
       app.use("/games", gameRouter);
       app.use("/user", userRouter);
+      app.use("/wish_list", wishListRouter);
 
       app.get("/games_on_sale", async (_req, res) => {
         if (!games_on_sale) {
@@ -90,14 +94,20 @@ createConnection().then(async (db) => {
         }
       });
 
-      app.get("/", async (_, _res, next) => {
-        console.log("test");
-        _res.send("FDFD");
-      });
-      app.get("/", async (_r, res) => {
-        console.log("test2");
-        res.json("RRR");
-        console.log("FFDF");
+      app.get("/", async (_, res) => {
+        const game = await Game.findOne({ id: 415 });
+        if (!game) return res.json({});
+        game.prices = await Price.find({
+          where: {
+            game: game,
+          },
+          order: {
+            start_date: "DESC",
+          },
+          take: 1,
+        });
+
+        return res.json(game);
       });
 
       app.listen(PORT, () => {

@@ -1,10 +1,12 @@
 import {
   BaseEntity,
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+
 import { Game } from "./game";
 import { User } from "./user";
 
@@ -20,4 +22,7 @@ export class WishList extends BaseEntity {
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
+
+  @Column()
+  is_present: Boolean;
 }

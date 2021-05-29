@@ -1,19 +1,46 @@
-import React from "react";
-import { Button, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+
+import { WishListItem } from "../components/WishListItem";
+import { API_URL } from "../constants";
 import { useTokenStore } from "../store/useTokenStore";
+import { WishListResponse } from "../types/response";
 import { ThemeText } from "../ui/ThemeText";
+import { getDataWithAuth } from "../utils/getDataWithAuth";
 
 export const WishListScreen = () => {
-  const { accessToken, refreshToken } = useTokenStore();
+  const { accessToken, refreshToken, setTokens } = useTokenStore();
+  const [isLoading, setLoading] = useState(false);
+  const [wishListResponse, setWishListResponse] = useState<WishListResponse>();
+  useEffect(() => {
+    setLoading(true);
+    getDataWithAuth(
+      API_URL + "/wish_list",
+      accessToken || "",
+      refreshToken || ""
+    ).then(async (r) => {
+      const { data, accessToken } = r!;
+      console.log(data);
+      const wishList = setWishListResponse({ ...data });
+      await setTokens({
+        accessToken: accessToken,
+        refreshToken: refreshToken!,
+      });
+    });
+    setLoading(false);
+  }, [accessToken, refreshToken]);
+
   return (
     <View style={styles.container}>
       <ThemeText>Wish List</ThemeText>
-      <Button
-        title="Test"
-        onPress={() => {
-          console.log({ accessToken, refreshToken });
-        }}
-      />
+      {wishListResponse && wishListResponse.wishList && (
+        <FlatList
+          style={{ marginBottom: 20 }}
+          data={wishListResponse?.wishList}
+          keyExtractor={({ store_id }) => store_id}
+          renderItem={({ item }) => <WishListItem item={item} />}
+        />
+      )}
     </View>
   );
 };

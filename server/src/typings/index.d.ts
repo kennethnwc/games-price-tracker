@@ -1,6 +1,7 @@
 export type UserInRequest = {
   googleID: string;
   email: string;
+  userID: number;
 };
 
 export type GoogleVerifyResponse = {

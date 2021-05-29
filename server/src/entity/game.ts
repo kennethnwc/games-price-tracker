@@ -1,10 +1,11 @@
 import {
+  BaseEntity,
   Column,
   Entity,
-  PrimaryGeneratedColumn,
   OneToMany,
-  BaseEntity,
+  PrimaryGeneratedColumn,
 } from "typeorm";
+
 import { Price } from "./price";
 
 @Entity()
@@ -20,4 +21,7 @@ export class Game extends BaseEntity {
 
   @OneToMany(() => Price, (price) => price.game)
   prices: Price[];
+
+  @Column({ nullable: true })
+  image_url: string;
 }

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { getRepository } from "typeorm";
 
+import { Game } from "../entity/game";
+import { User } from "../entity/user";
 import { WishList } from "../entity/whislist";
 import { authMiddleware } from "../middleware/auth";
 import { getGameWithLastPrice } from "../query/getGameWithLastPrice";
@@ -14,6 +16,9 @@ wishListRouter.get("/", authMiddleware, async (req, res) => {
 
     const wishListRaw = await wishListRepository
       .createQueryBuilder("wish_list")
+      .where("wish_list.user_id = :id AND wish_list.is_present = true", {
+        id: userID,
+      })
       .getRawMany<{
         wish_list_id: number;
         wish_list_is_present: boolean;
@@ -35,17 +40,38 @@ wishListRouter.get("/", authMiddleware, async (req, res) => {
 
     return res.json({ wishList: result, userID: userID });
   } catch (err) {
+    console.log(err);
     return res.json({ error: err.message, userID: userID });
   }
 });
 
-// wishListRouter.post("/", authMiddleware, async (req, res) => {
-//   const googleID = req.user?.googleID;
-//   if (!googleID) {
-//     return res.json();
-//   }
-//   const store_id = req.body.store_id;
-//   if (!store_id) {
-//     return res.json();
-//   }
-// });
+wishListRouter.post("/", authMiddleware, async (req, res) => {
+  const googleID = req.user?.googleID;
+  if (!googleID) {
+    return res.json({});
+  }
+  const store_id = req.body.store_id;
+  if (!store_id) {
+    return res.json({});
+  }
+
+  const user = await User.findOne({ googleID: googleID });
+  if (!user) {
+    return res.json({});
+  }
+  const game = await Game.findOne({ store_id: store_id });
+  if (!game) {
+    return res.json({});
+  }
+
+  const wishList = await WishList.findOne({ user: user, game: game });
+  if (wishList) {
+    wishList.is_present = !wishList.is_present;
+    await wishList.save();
+    return res.json({ message: "success" });
+  }
+
+  const newWishList = WishList.create({ user: user, game: game });
+  await newWishList.save();
+  return res.json({ message: "success" });
+});

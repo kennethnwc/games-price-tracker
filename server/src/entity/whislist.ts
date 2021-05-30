@@ -23,6 +23,6 @@ export class WishList extends BaseEntity {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @Column()
+  @Column({ default: true })
   is_present: Boolean;
 }

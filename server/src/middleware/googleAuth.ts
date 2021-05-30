@@ -15,7 +15,15 @@ export const googleAuthMiddle = async (
     .get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
     .then((res) => res.data)
     .catch(() => {});
+
   if (!data) return res.sendStatus(403);
+  if (
+    data.aud !== process.env.IOS_CLIENT_ID &&
+    data.aud !== process.env.AN_CLIENT_ID
+  ) {
+    return res.sendStatus(401);
+  }
+
   req.googleVerifyResponse = data;
   next();
   return;

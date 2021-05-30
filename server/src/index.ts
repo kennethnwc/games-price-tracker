@@ -1,8 +1,8 @@
-import "dotenv";
 import "reflect-metadata";
 
 import amqp from "amqplib/callback_api";
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import fs from "fs";
 import { createConnection } from "typeorm";
@@ -13,6 +13,8 @@ import { Price } from "./entity/price";
 import { gameRouter } from "./routes/games";
 import { userRouter } from "./routes/user";
 import { wishListRouter } from "./routes/wishList";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 

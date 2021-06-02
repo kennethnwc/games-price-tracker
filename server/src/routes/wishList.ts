@@ -48,20 +48,20 @@ wishListRouter.get("/", authMiddleware, async (req, res) => {
 wishListRouter.post("/", authMiddleware, async (req, res) => {
   const googleID = req.user?.googleID;
   if (!googleID) {
-    return res.json({});
+    return res.json({ message: "do not have a googleID" });
   }
   const store_id = req.body.store_id;
   if (!store_id) {
-    return res.json({});
+    return res.json({ message: "cannot get store_id from body" });
   }
 
   const user = await User.findOne({ googleID: googleID });
   if (!user) {
-    return res.json({});
+    return res.json({ message: "no user found" });
   }
   const game = await Game.findOne({ store_id: store_id });
   if (!game) {
-    return res.json({});
+    return res.json({ message: "no game found" });
   }
 
   const wishList = await WishList.findOne({ user: user, game: game });

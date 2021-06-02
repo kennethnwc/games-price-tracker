@@ -11,7 +11,7 @@ export const authMiddleware = async (
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
   if (!token) {
-    return res.json({});
+    return res.json({ message: "no access token" });
   }
   jwt.verify(token, process.env.JWT_SECRET!, (err, user) => {
     if (err) {

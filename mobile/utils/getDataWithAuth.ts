@@ -3,13 +3,20 @@ import { API_URL } from "../constants";
 export const getDataWithAuth = async (
   url: string,
   accessToken: string,
-  refreshToken: string
+  refreshToken: string,
+  config?: RequestInit
 ) => {
   let accessTokenToFetch = accessToken;
   let retryCounter = 3;
   while (retryCounter > 0) {
     const data = await fetch(url, {
-      headers: { Authorization: `Bearer ${accessTokenToFetch}` },
+      method: "GET",
+      ...config,
+      headers: {
+        Authorization: `Bearer ${accessTokenToFetch}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
     })
       .then((r) => r.json())
       .catch(() => {

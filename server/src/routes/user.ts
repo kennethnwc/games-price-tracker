@@ -1,6 +1,5 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-
 import { User } from "../entity/user";
 import { authMiddleware } from "../middleware/auth";
 import { googleAuthMiddle } from "../middleware/googleAuth";
@@ -9,8 +8,9 @@ import { getAccessToken, getRefreshToken } from "../utils";
 
 export const userRouter = Router();
 
-userRouter.get("/login", googleAuthMiddle, async (req, res) => {
+userRouter.post("/login", googleAuthMiddle, async (req, res) => {
   const data = req.googleVerifyResponse;
+  const expo_push_token = req.body.expo_push_token;
   if (data) {
     const userRecord = await User.findOne({ googleID: data.sub });
     if (!userRecord) {
@@ -18,6 +18,7 @@ userRouter.get("/login", googleAuthMiddle, async (req, res) => {
       const newUser = await User.create({
         email: data.email,
         googleID: data.sub,
+        expo_push_token: expo_push_token,
       }).save();
       const user = {
         userID: newUser.id,
@@ -29,6 +30,10 @@ userRouter.get("/login", googleAuthMiddle, async (req, res) => {
       return res.json({ accessToken, refreshToken });
     } else {
       // userRecord in database
+      if (expo_push_token) {
+        userRecord.expo_push_token = expo_push_token;
+        userRecord.save();
+      }
       const user = {
         email: userRecord.email,
         googleID: userRecord.googleID,

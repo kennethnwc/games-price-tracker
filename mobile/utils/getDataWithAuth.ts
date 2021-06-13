@@ -1,4 +1,5 @@
 import { API_URL } from "../constants";
+import { REDIRECT_TO_LOGIN_SCREEN } from "./constants";
 
 export const getDataWithAuth = async (
   url: string,
@@ -18,11 +19,16 @@ export const getDataWithAuth = async (
         "Content-Type": "application/json",
       },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        return r.json();
+      })
       .catch(() => {
-        return "access token expired";
+        throw Error(REDIRECT_TO_LOGIN_SCREEN);
       });
-    if (data === "access token expired") {
+    if (
+      data === "access token expired" ||
+      ("error" in data && data.error === "token expired")
+    ) {
       retryCounter--;
       const newAccess = await fetch(API_URL + "/user/token", {
         method: "POST",
@@ -31,12 +37,12 @@ export const getDataWithAuth = async (
       })
         .then((r) => r.json())
         .catch(() => {
-          return "refresh token expired";
+          throw Error(REDIRECT_TO_LOGIN_SCREEN);
         });
       if (newAccess && newAccess.accessToken) {
         accessTokenToFetch = newAccess.accessToken;
       } else {
-        throw Error("refresh token expired");
+        throw Error(REDIRECT_TO_LOGIN_SCREEN);
       }
     } else {
       return { data, accessToken };

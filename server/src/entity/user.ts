@@ -18,6 +18,9 @@ export class User extends BaseEntity {
   @Column({ name: "google_id", unique: true })
   googleID: string;
 
+  @Column({ nullable: true })
+  expo_push_token: string;
+
   @CreateDateColumn()
   created_at: Date;
 

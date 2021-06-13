@@ -1,7 +1,8 @@
-import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
+
 import { Item } from "../components/Item";
+import { API_URL } from "../constants";
 import { ThemeText } from "../ui/ThemeText";
 
 export const HomeScreen = () => {
@@ -13,7 +14,7 @@ export const HomeScreen = () => {
     }>();
 
   useEffect(() => {
-    fetch("http://192.168.1.21:4000/games_on_sale")
+    fetch(API_URL + "/games_on_sale")
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => console.error(error))

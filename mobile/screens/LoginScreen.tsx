@@ -6,6 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import { AN_CLIENT_ID, API_URL, IOS_CLIENT_ID } from "../constants";
 import { UserStackNavigatorParam } from "../navigation/StackNavigator";
+import { useExpoPushToken } from "../store/useExpoPushTokenStore";
 import { useTokenStore } from "../store/useTokenStore";
 import { Layout } from "./Layout";
 
@@ -15,6 +16,7 @@ type LoginScreenProps = {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const { setTokens, refreshToken } = useTokenStore();
+  const { expoPushToken } = useExpoPushToken();
   const signInAsync = async () => {
     try {
       const result = await Google.logInAsync({
@@ -27,10 +29,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         result.accessToken &&
         result.refreshToken
       ) {
-        const headers = new Headers();
-        headers.append("Authorization", `Bearer ${result.idToken}`);
         const data = await fetch(API_URL + "/user/login", {
-          headers: headers,
+          body: JSON.stringify({ expo_push_token: expoPushToken }),
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${result.idToken}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
         })
           .then((r) => r.json())
           .catch(() => null);
@@ -38,18 +44,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         });
-        navigation.navigate("Profile", undefined);
+        navigation.replace("Profile", undefined);
       }
     } catch (error) {}
   };
   return (
     <Layout>
-      <Button
-        title="Profile"
-        onPress={() => {
-          navigation.navigate("Profile", undefined);
-        }}
-      />
       {refreshToken ? (
         <Button
           title="Profile"

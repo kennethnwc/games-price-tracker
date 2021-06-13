@@ -13,6 +13,9 @@ import { API_URL } from "../constants";
 import { useTokenStore } from "../store/useTokenStore";
 import { getDataWithAuth } from "../utils/getDataWithAuth";
 import { Layout } from "./Layout";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { UserStackNavigatorParam } from "../navigation/StackNavigator";
+import { REDIRECT_TO_LOGIN_SCREEN } from "../utils/constants";
 
 export type ProfileScreenParam = {
   Profile: { accessToken: string };
@@ -20,7 +23,8 @@ export type ProfileScreenParam = {
 
 export const ProfileScreen = () => {
   const { accessToken, setTokens, refreshToken } = useTokenStore();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigationProp<UserStackNavigatorParam>>();
   const [userInfo, setUserInfo] = useState<any>(null);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
@@ -33,6 +37,7 @@ export const ProfileScreen = () => {
     )
       .then(async (r) => {
         const { data, accessToken } = r!;
+        console.log(data);
         setUserInfo({ ...data });
         await setTokens({
           accessToken: accessToken,
@@ -40,10 +45,10 @@ export const ProfileScreen = () => {
         });
       })
       .catch(async (err) => {
-        if (err.message === "refresh token expired") {
+        if (err.message === REDIRECT_TO_LOGIN_SCREEN) {
           await setTokens({ accessToken: "", refreshToken: "" });
         }
-        navigation.navigate("Login");
+        navigation.replace("Login");
       });
     setLoading(false);
   }, [accessToken]);
@@ -64,7 +69,7 @@ export const ProfileScreen = () => {
             onPress={async () => {
               await setTokens({ accessToken: "", refreshToken: "" });
               setUserInfo(null);
-              navigation.navigate("Login");
+              navigation.replace("Login");
             }}
           />
         </View>
@@ -72,7 +77,7 @@ export const ProfileScreen = () => {
         <Button
           title="Login"
           onPress={() => {
-            navigation.navigate("Login");
+            navigation.replace("Login");
           }}
         />
       )}

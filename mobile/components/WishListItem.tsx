@@ -27,7 +27,7 @@ export const WishListItem: React.FC<Props> = ({ item }) => {
           resizeMode="cover"
           style={{ width: "100%", height: 200 }}
           borderRadius={5}
-        ></Image>
+        />
         <ThemeText>{item.title}</ThemeText>
         <ThemeText>
           {item.prices[0].code} {item.prices[0].amount}

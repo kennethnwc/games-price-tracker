@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 
 import { Item } from "../components/Item";
@@ -20,30 +20,31 @@ export const HomeScreen = () => {
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
   }, []);
-  const memoizedValue = useMemo(
-    () =>
-      ({ item }: { item: any }) =>
-        <Item item={item}></Item>,
-    [data?.games]
-  );
 
   return (
     <View style={{ flex: 1, padding: 24 }}>
       {isLoading ? (
-        <ActivityIndicator />
+        <ActivityIndicator size="small"></ActivityIndicator>
       ) : (
-        <>
+        <View>
           <ThemeText style={{ marginBottom: 10 }}>
             Last Updated {data?.lastUpdated.split("T")[0]}
           </ThemeText>
           <FlatList
+            initialNumToRender={3}
+            maxToRenderPerBatch={3}
             style={{ marginBottom: 20 }}
             data={data?.games}
             keyExtractor={({ store_id }) => store_id}
-            renderItem={memoizedValue}
+            renderItem={renderItem}
+            removeClippedSubviews={true}
           />
-        </>
+        </View>
       )}
     </View>
   );
 };
+
+const renderItem = ({ item }: { item: any }) => (
+  <Item key={item.id} item={item}></Item>
+);

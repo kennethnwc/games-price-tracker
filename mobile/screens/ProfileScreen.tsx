@@ -29,6 +29,7 @@ export const ProfileScreen = () => {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
+    const ac = new AbortController();
 
     getDataWithAuth(
       API_URL + "/user/profile",
@@ -37,7 +38,6 @@ export const ProfileScreen = () => {
     )
       .then(async (r) => {
         const { data, accessToken } = r!;
-        console.log(data);
         setUserInfo({ ...data });
         await setTokens({
           accessToken: accessToken,
@@ -51,6 +51,9 @@ export const ProfileScreen = () => {
         navigation.replace("Login");
       });
     setLoading(false);
+    return () => {
+      ac.abort();
+    };
   }, [accessToken]);
 
   if (isLoading) return <ActivityIndicator />;

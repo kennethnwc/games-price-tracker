@@ -1,6 +1,6 @@
 import { curveStepBefore, extent, line, scaleLinear } from "d3";
 import React from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedProps,
@@ -87,27 +87,40 @@ export const PriceHisotryChart: React.FC<Props> = ({ prices }) => {
 
   const priceToShow = useDerivedValue(() => {
     const v = interpolate(y.value, [innerHeight, startHeight], yRange);
-    return v.toLocaleString();
+    return `HKD $ ${v.toLocaleString()}`;
   });
 
   const dateToShow = useDerivedValue(() => {
     const v = interpolate(x.value, [startWidth, innerWidth], xRange);
-    return new Date(v).toLocaleDateString();
+    return new Date(v).toDateString();
   });
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        <Text>HKD</Text>
-        <ReText text={priceToShow} />
-        <Text>Last Updated Price</Text>
-        <ReText text={dateToShow} />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          marginHorizontal: 24,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <ReText text={priceToShow} style={styles.price} />
+        </View>
+
+        <ReText text={dateToShow} style={styles.date} />
       </View>
       <View>
         <Svg width={innerWidth} height={innerHeight}>
           <AnimatedPath
             animatedProps={animatedProps}
-            stroke="#367be2"
+            stroke="#5bd3c9"
             strokeWidth={5}
             fill="transparent"
           />
@@ -129,5 +142,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 20,
+  },
+  price: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#5bd3c9",
+  },
+  date: {
+    color: "#5bd3c9",
   },
 });

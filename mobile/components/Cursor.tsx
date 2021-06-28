@@ -6,7 +6,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { getYForX, Path, clamp } from "react-native-redash";
+import { clamp, getYForX, Path } from "react-native-redash";
 
 const CURSOR = 50;
 
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     width: CURSOR,
     height: CURSOR,
     borderRadius: CURSOR / 2,
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(135, 234, 224, 0.1)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     borderRadius: 7.5,
-    backgroundColor: "#367be2",
+    backgroundColor: "#5bd3c9",
   },
 });

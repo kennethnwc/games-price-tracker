@@ -1,11 +1,13 @@
-import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { Text, TextProps } from "react-native";
 
-export const ThemeText: React.FC<TextProps> = ({ children, ...props }) => {
-  const { colors } = useTheme();
+export const ThemeText: React.FC<TextProps> = ({
+  children,
+  style,
+  ...props
+}) => {
   return (
-    <Text style={{ color: colors.text }} {...props}>
+    <Text style={[{ color: "white" }, style]} {...props}>
       {children}
     </Text>
   );

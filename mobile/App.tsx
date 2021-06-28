@@ -10,7 +10,7 @@ import {
   SafeAreaProvider,
 } from "react-native-safe-area-context";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 
 import { Tabs } from "./navigation/TabNavigator";
 import { useExpoPushToken } from "./store/useExpoPushTokenStore";
@@ -67,10 +67,14 @@ const App = () => {
   }, [isTokenStoreReady]);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      theme={{
+        ...DarkTheme,
+      }}
+    >
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <AppearanceProvider>
-          <StatusBar style="dark" />
+          <StatusBar style="light" />
           <Tabs />
         </AppearanceProvider>
       </SafeAreaProvider>

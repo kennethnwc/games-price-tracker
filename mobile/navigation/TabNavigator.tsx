@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -22,39 +22,33 @@ const Tab = createBottomTabNavigator();
 
 export const Tabs = () => {
   return (
-    <View style={{ flex: 1, position: "relative" }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "black",
+      }}
+    >
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: ({ color, size }) => {
             // You can return any component that you like here!
             const iconName = tabIcons[route.name] || "tag";
             return <Icon name={iconName} size={size} color={color} />;
           },
         })}
         tabBarOptions={{
-          showLabel: true,
+          style: {
+            borderTopWidth: 1,
+          },
+          showLabel: false,
+          activeTintColor: "#5bd3c9",
         }}
       >
-        <Tab.Screen name="Home" component={HomeStackNavigator}></Tab.Screen>
-        <Tab.Screen name="Search" component={SearchStackNavigator}></Tab.Screen>
-        <Tab.Screen
-          name="WishList"
-          component={WishListStackNavigator}
-        ></Tab.Screen>
-        <Tab.Screen name="User" component={UserStackNavigator}></Tab.Screen>
+        <Tab.Screen name="Home" component={HomeStackNavigator} />
+        <Tab.Screen name="Search" component={SearchStackNavigator} />
+        <Tab.Screen name="WishList" component={WishListStackNavigator} />
+        <Tab.Screen name="User" component={UserStackNavigator} />
       </Tab.Navigator>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  shadow: {
-    shadowColor: "#7f5df0",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-    elevation: 5,
-  },
-});

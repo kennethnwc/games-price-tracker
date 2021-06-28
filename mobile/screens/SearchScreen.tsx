@@ -1,16 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SearchBar } from "react-native-elements";
 
 import { Item } from "../components/Item";
 import { API_URL } from "../constants";
 import { Layout } from "../ui/Layout";
+import { ThemeText } from "../ui/ThemeText";
 
 export const SearchScreen = () => {
   const [isLoading, setLoading] = useState(false);
@@ -54,9 +49,9 @@ export const SearchScreen = () => {
       />
       <View style={{ flex: 1, padding: 24 }}>
         {search !== "" && result.length === 0 ? (
-          <Text>No results</Text>
+          <ThemeText>No results</ThemeText>
         ) : search === "" ? (
-          <Text>Please input</Text>
+          <ThemeText>Please input</ThemeText>
         ) : (
           <></>
         )}
@@ -73,11 +68,3 @@ export const SearchScreen = () => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

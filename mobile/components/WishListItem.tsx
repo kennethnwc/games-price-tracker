@@ -14,7 +14,7 @@ export const WishListItem: React.FC<Props> = ({ item }) => {
     <TouchableOpacity
       style={{ marginBottom: 10 }}
       onPress={(e) => {
-        navigation.navigate("Detail", { id: item.store_id });
+        navigation.navigate("Detail", { store_id: item.store_id });
       }}
     >
       <View>

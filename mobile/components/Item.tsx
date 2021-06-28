@@ -25,7 +25,7 @@ type Props = {
   isWishProps?: boolean;
 };
 
-export const Item: React.FC<Props> = ({ item, isWishProps = false }) => {
+export const Item: React.FC<Props> = ({ item }) => {
   const { accessToken, refreshToken, setTokens } = useTokenStore();
   const { wishListSet, setWishListSet } = useWishListSetStore();
   const navigation =
@@ -55,6 +55,7 @@ export const Item: React.FC<Props> = ({ item, isWishProps = false }) => {
       </TouchableOpacity>
       <View
         style={{
+          marginVertical: 10,
           display: "flex",
           flexDirection: "row",
           flexWrap: "wrap",

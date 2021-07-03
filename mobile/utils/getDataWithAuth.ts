@@ -41,6 +41,7 @@ export const getDataWithAuth = async (
         });
       if (newAccess && newAccess.accessToken) {
         accessTokenToFetch = newAccess.accessToken;
+        accessToken = newAccess.accessToken;
       } else {
         throw Error(REDIRECT_TO_LOGIN_SCREEN);
       }

@@ -12,4 +12,4 @@ setup database
 
 ## setup rabbit mq using docker
 
-docker run -d --name myrabbitmq -v /Users/kwcng/dev/docker-volume/rabbitmq/data:/var/lib/rabbitmq/ -v /Users/kwcng/dev/docker-volume/rabbitmq/logs:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 rabbitmq:3-management-alpine
+docker run -d --name myrabbitmq -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -v /Users/kwcng/dev/docker-volume/rabbitmq/data:/var/lib/rabbitmq/ -v /Users/kwcng/dev/docker-volume/rabbitmq/logs:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 rabbitmq:3-management-alpine

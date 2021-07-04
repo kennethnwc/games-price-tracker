@@ -8,25 +8,26 @@ import fs from "fs";
 import { createConnection } from "typeorm";
 
 import { gameUpdateConsumer } from "./consumers/gameUpdateConsumer";
-import { Game } from "./entity/game";
-import { Price } from "./entity/price";
 import { gameRouter } from "./routes/games";
 import { userRouter } from "./routes/user";
 import { wishListRouter } from "./routes/wishList";
+import { sendPushNotification } from "./services/sendPushNotification";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
+const RABBITMQ_HOST = process.env.RABBITMQ_HOST || "amqp://localhost";
 
 let games_on_sale = JSON.parse(
-  fs.readFileSync("./games_on_sales.json", {
+  fs.readFileSync("../games_on_sales.json", {
     encoding: "utf8",
     flag: "r",
   })
 );
 
 createConnection().then(async (db) => {
-  amqp.connect("amqp://localhost", (error0, rabbitmq) => {
+  await db.runMigrations();
+  amqp.connect(RABBITMQ_HOST, (error0, rabbitmq) => {
     if (error0) {
       throw error0;
     }
@@ -34,6 +35,8 @@ createConnection().then(async (db) => {
       if (error1) {
         throw error1;
       }
+
+      channel.prefetch(1);
 
       channel.assertQueue("games_update", {
         durable: false,
@@ -58,6 +61,15 @@ createConnection().then(async (db) => {
               const newGamesOnSale = result.games.filter(
                 (game: any) => game.discount === true
               );
+              const gamesOnSaleStoreID = newGamesOnSale.map(
+                ({ store_id }: any) => store_id
+              );
+
+              let currTime = new Date().getHours();
+              if (currTime > 8 && currTime < 11) {
+                sendPushNotification(gamesOnSaleStoreID);
+              }
+
               const newLastUpdated = result.lastUpdate;
               const newGamesOnSaleResult = {
                 games: newGamesOnSale,
@@ -82,7 +94,13 @@ createConnection().then(async (db) => {
         { noAck: true }
       );
 
-      channel.consume("game_update", gameUpdateConsumer, { noAck: true });
+      channel.consume(
+        "game_update",
+        async (msg) => {
+          gameUpdateConsumer(msg, channel);
+        },
+        { noAck: false }
+      );
 
       app.use("/games", gameRouter);
       app.use("/user", userRouter);
@@ -97,19 +115,8 @@ createConnection().then(async (db) => {
       });
 
       app.get("/", async (_, res) => {
-        const game = await Game.findOne({ id: 415 });
-        if (!game) return res.json({});
-        game.prices = await Price.find({
-          where: {
-            game: game,
-          },
-          order: {
-            start_date: "DESC",
-          },
-          take: 1,
-        });
-
-        return res.json(game);
+        console.log(new Date().getHours());
+        res.send({ message: "success" });
       });
 
       app.listen(PORT, () => {

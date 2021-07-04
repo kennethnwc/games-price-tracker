@@ -2,8 +2,19 @@ import { Game } from "../entity/game";
 import { Price } from "../entity/price";
 
 export const getGameWithPrices = async (store_id: string) => {
-  const game = await Game.findOne({ store_id }, { relations: ["prices"] });
-  return game;
+  const game = await Game.findOne({ store_id });
+  if (!game) {
+    return undefined;
+  }
+  const prices = await Price.find({
+    where: {
+      game: game,
+    },
+    order: {
+      start_date: "DESC",
+    },
+  });
+  return prices;
 };
 
 type GetGameWithLastPriceParams = {

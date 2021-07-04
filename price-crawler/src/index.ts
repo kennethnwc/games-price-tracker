@@ -1,13 +1,17 @@
 import amqp from "amqplib/callback_api";
+import dotenv from "dotenv";
 import schedule from "node-schedule";
 import puppeteer from "puppeteer";
 
-const scheduler =
-  process.env.NODE_ENV === "development" ? "1 * * * * *" : "* 1 * * *";
+import { RABBITMQ_HOST, scheduleInterval } from "./config";
+
+dotenv.config();
 
 const getSales = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
+
   await page.goto("https://store.nintendo.com.hk/games/all-released-games", {
     waitUntil: "networkidle0",
   });
@@ -52,7 +56,7 @@ const getSales = async () => {
   return games;
 };
 
-amqp.connect("amqp://localhost", (error0, rabbitmq) => {
+amqp.connect(RABBITMQ_HOST, (error0, rabbitmq) => {
   if (error0) {
     throw error0;
   }
@@ -69,7 +73,9 @@ amqp.connect("amqp://localhost", (error0, rabbitmq) => {
       durable: false,
     });
 
-    schedule.scheduleJob("1 * * * * *", async () => {
+    console.log("crontab", scheduleInterval);
+
+    schedule.scheduleJob(scheduleInterval, async () => {
       console.log("get games");
       const games = await getSales();
       games.forEach((game) => {

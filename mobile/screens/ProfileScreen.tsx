@@ -24,8 +24,6 @@ export const ProfileScreen = () => {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
-    const ac = new AbortController();
-
     getDataWithAuth(
       API_URL + "/user/profile",
       accessToken || "",
@@ -46,14 +44,11 @@ export const ProfileScreen = () => {
         navigation.replace("Login");
       });
     setLoading(false);
-    return () => {
-      ac.abort();
-    };
   }, [accessToken]);
 
-  if (isLoading) return <ActivityIndicator />;
   return (
     <Layout>
+      {isLoading && <ActivityIndicator size="large" color="white" />}
       <View style={{ marginTop: 30 }}>
         <ThemeText style={styles.header}>Profile</ThemeText>
         <ThemeText style={styles.userInfo}>

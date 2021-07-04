@@ -1,19 +1,13 @@
-### Mini setup for typescript project
+### Run init On the first time
 
-### Install
-
-```bash
-git clone https://github.com/kennethnwc/typescript-starter.git
-yarn install
-```
-
-### Developmenet
+### First Time
 
 ```bash
-yarn dev
+yarn build
+yarn init-database
 ```
 
-### Production
+### setup routine crwaler
 
 ```bash
 yarn build

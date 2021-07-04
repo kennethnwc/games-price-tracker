@@ -15,7 +15,7 @@ type LoginScreenProps = {
 };
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { setTokens, refreshToken } = useTokenStore();
+  const { setTokens } = useTokenStore();
   const { expoPushToken } = useExpoPushToken();
   const signInAsync = async () => {
     try {

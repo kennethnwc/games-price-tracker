@@ -1,10 +1,10 @@
 import {
+  BaseEntity,
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  BaseEntity,
   JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Game } from "./game";
 

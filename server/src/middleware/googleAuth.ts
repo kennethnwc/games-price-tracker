@@ -19,7 +19,9 @@ export const googleAuthMiddle = async (
   if (!data) return res.sendStatus(403);
   if (
     data.aud !== process.env.IOS_CLIENT_ID &&
-    data.aud !== process.env.AN_CLIENT_ID
+    data.aud !== process.env.AN_CLIENT_ID &&
+    data.aud !== process.env.IOS_STANDALONE_ID &&
+    data.aud !== process.env.AN_STANDALONE_ID
   ) {
     return res.sendStatus(401);
   }

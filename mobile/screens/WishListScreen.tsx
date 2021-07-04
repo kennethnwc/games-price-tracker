@@ -20,7 +20,7 @@ export const WishListScreen = () => {
   const { accessToken, refreshToken, setTokens } = useTokenStore();
   const [isLoading, setLoading] = useState(false);
   const [wishListResponse, setWishListResponse] = useState<WishListResponse>();
-  const { wishListSet, setWishListSet } = useWishListSetStore();
+  const { setWishListSet } = useWishListSetStore();
   const [refresh, setRefresh] = useState(true);
   const memoizedValue = useMemo(
     () =>
@@ -53,7 +53,7 @@ export const WishListScreen = () => {
         setTokens({ accessToken: "", refreshToken: "" });
       });
     setLoading(false);
-  }, [accessToken, refresh]);
+  }, [refresh, accessToken]);
 
   return (
     <Layout>

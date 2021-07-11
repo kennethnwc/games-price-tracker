@@ -10,8 +10,7 @@ yarn init-database
 ### setup routine crwaler
 
 ```bash
-yarn build
-yarn start
+pm2 start yarn --name crawler -- start
 ```
 
 ### Make it work on droplet

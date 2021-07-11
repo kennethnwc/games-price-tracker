@@ -5,7 +5,9 @@ import moment from "moment-timezone";
 console.log(moment(new Date()).tz("Asia/Hong_Kong").format());
 
 const getSales = async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
@@ -52,6 +54,6 @@ const getSales = async () => {
   await browser.close();
   return games;
 };
-// getSales().then((r) => {
-//   console.log(r);
-// });
+getSales().then((r) => {
+  console.log(r);
+});

@@ -13,3 +13,9 @@ yarn init-database
 yarn build
 yarn start
 ```
+
+### Make it work on droplet
+
+```bash
+sudo apt-get install -y libgbm-dev
+```

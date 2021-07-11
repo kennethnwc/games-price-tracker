@@ -3,7 +3,11 @@ import dotenv from "dotenv";
 import schedule from "node-schedule";
 import puppeteer from "puppeteer";
 
-import { RABBITMQ_HOST, scheduleInterval } from "./config";
+import {
+  getHongKongTimeISOString,
+  RABBITMQ_HOST,
+  scheduleInterval,
+} from "./config";
 
 dotenv.config();
 
@@ -82,14 +86,14 @@ amqp.connect(RABBITMQ_HOST, (error0, rabbitmq) => {
         channel.sendToQueue(
           "game_update",
           Buffer.from(
-            JSON.stringify({ game, lastUpdate: new Date().toISOString() })
+            JSON.stringify({ game, lastUpdate: getHongKongTimeISOString() })
           )
         );
       });
       channel.sendToQueue(
         "games_update",
         Buffer.from(
-          JSON.stringify({ games, lastUpdate: new Date().toISOString() })
+          JSON.stringify({ games, lastUpdate: getHongKongTimeISOString() })
         )
       );
     });

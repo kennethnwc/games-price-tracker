@@ -1,8 +1,14 @@
+// @ts-nocheck
 import puppeteer from "puppeteer";
+import moment from "moment-timezone";
+
+console.log(moment(new Date()).tz("Asia/Hong_Kong").format());
 
 const getSales = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
+
   await page.goto("https://store.nintendo.com.hk/games/all-released-games", {
     waitUntil: "networkidle0",
   });
@@ -26,9 +32,10 @@ const getSales = async () => {
         .querySelector(".category-product-item-title-link")
         ?.getAttribute("href");
       const id = productHref?.substring(productHref.lastIndexOf("/") + 1);
-      const img = product.querySelector<HTMLImageElement>(
-        ".category-product-item-img img"
-      )?.src;
+      const img =
+        product.querySelector<HTMLImageElement>(
+          ".category-product-item-img img"
+        )?.src || "";
       return {
         title: product
           .querySelector(".category-product-item-title-link")
@@ -45,7 +52,6 @@ const getSales = async () => {
   await browser.close();
   return games;
 };
-
-getSales().then((r) => {
-  console.log(r);
-});
+// getSales().then((r) => {
+//   console.log(r);
+// });

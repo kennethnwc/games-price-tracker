@@ -26,6 +26,7 @@
     "@types/amqplib": "^0.5.17",
     "amqplib": "^0.8.0",
     "dotenv": "^10.0.0",
+    "moment-timezone": "^0.5.33",
     "node-schedule": "^2.0.0",
     "puppeteer": "^9.1.1",
     "puppeteer-core": "^9.1.1"

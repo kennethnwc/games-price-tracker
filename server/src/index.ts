@@ -66,7 +66,8 @@ createConnection().then(async (db) => {
               );
 
               let currTime = new Date().getHours();
-              if (currTime > 8 && currTime < 11) {
+              console.log(currTime);
+              if (currTime > 6 && currTime < 12) {
                 sendPushNotification(gamesOnSaleStoreID);
               }
 

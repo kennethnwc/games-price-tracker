@@ -55,6 +55,7 @@ export const HomeScreen: React.FC<Props> = () => {
             <FlatList
               initialNumToRender={3}
               maxToRenderPerBatch={3}
+              windowSize={3}
               style={{ marginBottom: 20 }}
               data={data?.games}
               keyExtractor={({ store_id }) => store_id}

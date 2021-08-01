@@ -5,3 +5,5 @@ export const API_URL =
 
 export const IOS_CLIENT_ID = Constants.manifest.extra?.IOS_CLIENT_ID || "";
 export const AN_CLIENT_ID = Constants.manifest.extra?.AN_CLIENT_ID || "";
+export const AN_STANDALONE_ID =
+  Constants.manifest.extra?.AN_STANDALONE_ID || "";

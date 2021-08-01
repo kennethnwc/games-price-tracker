@@ -4,7 +4,12 @@ import { Button, Platform, StyleSheet, View } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { AN_CLIENT_ID, API_URL, IOS_CLIENT_ID } from "../constants";
+import {
+  AN_CLIENT_ID,
+  AN_STANDALONE_ID,
+  API_URL,
+  IOS_CLIENT_ID,
+} from "../constants";
 import { UserStackNavigatorParam } from "../navigation/StackNavigator";
 import { useExpoPushToken } from "../store/useExpoPushTokenStore";
 import { useTokenStore } from "../store/useTokenStore";
@@ -22,6 +27,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       const result = await Google.logInAsync({
         iosClientId: IOS_CLIENT_ID,
         androidClientId: AN_CLIENT_ID,
+        androidStandaloneAppClientId: AN_STANDALONE_ID,
       });
 
       if (

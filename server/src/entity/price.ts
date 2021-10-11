@@ -22,7 +22,7 @@ export class Price extends BaseEntity {
   @Column({ type: "timestamptz" })
   start_date: Date;
 
-  @ManyToOne(() => Game, (game) => game.prices)
+  @ManyToOne(() => Game, (game) => game.prices, { orphanedRowAction: "delete" })
   @JoinColumn({ name: "game_id" })
   game: Game;
 }

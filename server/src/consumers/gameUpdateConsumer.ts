@@ -20,9 +20,9 @@ export const gameUpdateConsumer = async (
       const lastPrice = prices[prices.length - 1];
       const updatePriceAmount = game.price.amount;
       if (!lastPrice || updatePriceAmount != lastPrice.amount) {
-        await Price.create({
+         await Price.create({
           code: game.price.currency,
-          amount: updatePriceAmount,
+          amount: updatePriceAmount || -1 ,// if it is -1, it means some error, sometimes rabbitmq message messed up,
           start_date: lastUpdate,
           game: gameRecord,
         }).save();
@@ -39,7 +39,7 @@ export const gameUpdateConsumer = async (
         gameAfterPriceUpdated.image_url = game.image_url;
         await gameAfterPriceUpdated.save();
       }
-    } else if (!gameRecord) {
+    } else if (!gameRecord && game.store_id ) { // sometimes rabbitmq message messed up, need to check game.store_id exists
       const price = game.price;
 
       const newPrice = await Price.create({

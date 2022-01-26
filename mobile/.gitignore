@@ -13,3 +13,5 @@ web-build/
 .DS_Store
 key.txt
 .env
+
+google-services.json

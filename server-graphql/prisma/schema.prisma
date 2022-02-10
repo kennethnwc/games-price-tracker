@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model game {
+  id        Int         @id(map: "PK_352a30652cd352f552fef73dec5") @default(autoincrement())
+  title     String      @db.VarChar
+  store_id  String      @unique(map: "UQ_99db584f1c67d1ce0dd8df363ac") @db.VarChar
+  image_url String?     @db.VarChar
+  price     price[]
+  wish_list wish_list[]
+}
+
+model migrations {
+  id        Int    @id(map: "PK_8c82d7f526340ab734260ea46be") @default(autoincrement())
+  timestamp BigInt
+  name      String @db.VarChar
+}
+
+model price {
+  id         Int      @id(map: "PK_d163e55e8cce6908b2e0f27cea4") @default(autoincrement())
+  code       String   @db.VarChar
+  amount     Float    @default(0)
+  start_date DateTime @db.Timestamptz(6)
+  game_id    Int?
+  game       game?    @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_bb8c9e4d6d416943acd90e6dcd4")
+}
+
+model user {
+  id              Int         @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
+  email           String      @unique(map: "UQ_e12875dfb3b1d92d7d7c5377e22") @db.VarChar
+  google_id       String      @unique(map: "UQ_7adac5c0b28492eb292d4a93871") @db.VarChar
+  expo_push_token String?     @db.VarChar
+  created_at      DateTime    @default(now()) @db.Timestamp(6)
+  updated_at      DateTime    @default(now()) @db.Timestamp(6)
+  wish_list       wish_list[]
+}
+
+model wish_list {
+  id         Int     @id(map: "PK_f8e27bbb59891db7cd9f920c272") @default(autoincrement())
+  is_present Boolean @default(true)
+  game_id    Int
+  user_id    Int
+  game       game    @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_65611934a7c0f6e1ac7818411ff")
+  user       user    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_c23debb14a44001e4c5ffb3169d")
+}

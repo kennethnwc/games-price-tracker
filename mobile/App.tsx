@@ -3,8 +3,7 @@ import "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
-import { NativeEventSubscription } from "react-native";
-import { AppearanceProvider, useColorScheme } from "react-native-appearance";
+import { NativeEventSubscription, useColorScheme } from "react-native";
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -34,8 +33,9 @@ const App = () => {
 
   const { setExpoPushToken } = useExpoPushToken();
 
-  const [notification, setNotification] =
-    useState<Notifications.Notification | boolean>(false);
+  const [notification, setNotification] = useState<
+    Notifications.Notification | boolean
+  >(false);
   const notificationListener = useRef<NativeEventSubscription>();
   const responseListener = useRef<NativeEventSubscription>();
 
@@ -73,10 +73,8 @@ const App = () => {
       }}
     >
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <AppearanceProvider>
-          <StatusBar style="light" />
-          <Tabs />
-        </AppearanceProvider>
+        <StatusBar style="light" />
+        <Tabs />
       </SafeAreaProvider>
     </NavigationContainer>
   );

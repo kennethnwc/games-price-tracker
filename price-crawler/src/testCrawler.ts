@@ -1,19 +1,19 @@
-// @ts-nocheck
 import puppeteer from "puppeteer";
-import moment from "moment-timezone";
 
-console.log(moment(new Date()).tz("Asia/Hong_Kong").format());
-
-const getSales = async () => {
+// @ts-ignore
+const getSales = async (p: string) => {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  await page.goto("https://store.nintendo.com.hk/games/all-released-games", {
-    waitUntil: "networkidle0",
-  });
+  await page.goto(
+    `https://store.nintendo.com.hk/games/all-released-games?p=${p}`,
+    {
+      waitUntil: "networkidle0",
+    }
+  );
 
   const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
   const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
@@ -54,6 +54,14 @@ const getSales = async () => {
   await browser.close();
   return games;
 };
-getSales().then((r) => {
-  console.log(r);
-});
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+(async () => {
+  for (let i = 0; i < 30; i++) {
+    const games = await getSales(i.toString());
+    if (games.length === 0) {
+      break;
+    }
+    await delay(500);
+  }
+})();

@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "init-database": "node dist/initDataBase.js",
     "mock-update": "node dist/mockUpdate.js",
-    "test-crawl": "node dist/testCrawler.js"
+    "test-crawl": "ts-node-dev src/testCrawler.ts"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",

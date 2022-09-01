@@ -11,16 +11,21 @@ import {
 
 dotenv.config();
 
-const getSales = async () => {
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+const getSales = async (p: string) => {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  await page.goto("https://store.nintendo.com.hk/games/all-released-games", {
-    waitUntil: "networkidle0",
-  });
+  await page.goto(
+    `https://store.nintendo.com.hk/games/all-released-games?p=${p}`,
+    {
+      waitUntil: "networkidle0",
+    }
+  );
 
   const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
   const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
@@ -82,22 +87,36 @@ amqp.connect(RABBITMQ_HOST, (error0, rabbitmq) => {
     console.log("crontab", scheduleInterval);
 
     schedule.scheduleJob(scheduleInterval, async () => {
+      let allGames: ValueType<ReturnType<typeof getSales>> = [];
       console.log("get games");
-      const games = await getSales();
-      games.forEach((game) => {
-        channel.sendToQueue(
-          "game_update",
-          Buffer.from(
-            JSON.stringify({ game, lastUpdate: getHongKongTimeISOString() })
-          )
-        );
-      });
+      for (let i = 1; i < 40; i++) {
+        const games = await getSales(i.toString());
+        if (games.length === 0) {
+          break;
+        }
+        allGames = allGames.concat(games);
+        games.forEach((game) => {
+          channel.sendToQueue(
+            "game_update",
+            Buffer.from(
+              JSON.stringify({ game, lastUpdate: getHongKongTimeISOString() })
+            )
+          );
+        });
+        await delay(500);
+      }
+
       channel.sendToQueue(
         "games_update",
         Buffer.from(
-          JSON.stringify({ games, lastUpdate: getHongKongTimeISOString() })
+          JSON.stringify({
+            games: allGames,
+            lastUpdate: getHongKongTimeISOString(),
+          })
         )
       );
     });
   });
 });
+
+export type ValueType<T> = T extends Promise<infer U> ? U : T;

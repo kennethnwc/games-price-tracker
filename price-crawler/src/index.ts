@@ -39,9 +39,15 @@ const getSales = async (p: string) => {
     );
     return allProduct.map((product) => {
       const currPriceString = product.querySelector(".price")?.textContent;
+      const specialPrice = product.querySelector(".special-price")
+        ? product.querySelector(".special-price")!.querySelector(".price")
+            ?.textContent
+        : null;
       const oldPriceString =
         product.querySelector(".old-price .price")?.textContent;
-      const [currency, amount] = currPriceString?.split(" ") || "HKD 0";
+      const [currency, amount] = specialPrice
+        ? specialPrice.split(" ")
+        : currPriceString?.split(" ") || "HKD 0";
       const productHref = product
         .querySelector(".category-product-item-title-link")
         ?.getAttribute("href");
